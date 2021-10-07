@@ -85,10 +85,11 @@ synth.out = synth(dataprep.out)
 # 3.) Provide a table with these characteristics for (1) California, (2) Synthetic California, and (3) the national average. Does the synthetic control or the national average more closely resemble California? How much weight is placed on each characteristic? And which states receive the greatest weight in the synthetic control? The function synth.tab is useful for this question.
 ```{r, echo = FALSE}
 
-synth.tables <- synth.tab(dataprep.res = dataprep.out,
-          synth.res = synth.out)
-synth.tables
-
+synth.tables <- synth.tab(
+  dataprep.res = dataprep.out,
+  synth.res = synth.out
+)
+print(synth.tables)
 
 ```
 
