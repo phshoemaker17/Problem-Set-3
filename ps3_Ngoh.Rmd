@@ -64,9 +64,9 @@ dataprep.out =
     treatment.identifier = 6,
     controls.identifier = countries,
     dependent = "cigsales",
-    predictors = c("price"),
+    predictors = "price",
     predictors.op = "mean",
-    time.predictors.prior = 1980:1988,
+    time.predictors.prior = 1970:1979,
     special.predictors = list(
       list("price", c(1980:1988), "mean"),
       list("cigsales", 1980, "mean"),
@@ -108,35 +108,15 @@ abline(v = 1989, col="red")
 
 placebos <- generate_placebos(dataprep.out,synth.out)
 
-plot_placebos(placebos, discrad.extreme = TRUE, mspe.limit = 1)
+plot_placebos(placebos, discrad.extreme = TRUE)
 
 ```
 
 
 #5.) Assess the statistical significance of the treatment effect.
 ``` {r, echo = FALSE}
-## MSPEs 
-treat_gap <- placebos$df[1:18, "Y1"] - placebos$df[1:18, "synthetic.Y1"]
 
-treat_mspe <- mean(treat_gap^2)
-
-
-
-placebos$df[1:9,3:2]
-
-
-
-#Analysis for Placebos
-
-placebo_gaps <- as.matrix(placebos$df[1:18,29:56] - placebos$df[1:18,1:28])
-placebo_mspe <- as.vector(colMeans(placebo_gaps^2))
-
-### Results 
-print(treat_mspe)
-
-
-print(sort(placebo_mspe))
-
+mspe_plot(placebos, discard.extreme = FALSE)
 
 
 ```
