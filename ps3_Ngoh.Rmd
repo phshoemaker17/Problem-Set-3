@@ -25,8 +25,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, echo = FALSE}
 cig <- read.csv("C:/Users/Martin/OneDrive/Desktop/ps3/tobacco_data.csv")
 
-cdata <- read.csv("C:/Users/Martin/OneDrive/Desktop/ps3/tobacco_data.csv")
-
 ```
 
 
@@ -66,19 +64,18 @@ dataprep.out =
     treatment.identifier = 6,
     controls.identifier = countries,
     dependent = "cigsales",
-    predictors = c("stfips", "price"),
+    predictors = c("price"),
     predictors.op = "mean",
     time.predictors.prior = 1980:1988,
     special.predictors = list(
-      list("cigsales", c(1980:1988), "mean"),
+      list("price", c(1980:1988), "mean"),
       list("cigsales", 1980, "mean"),
       list("cigsales", 1988, "mean")
     ),
-    time.optimize.ssr = 1988,
+    time.optimize.ssr = 1980:1988,
     time.plot = 1980:1997)
 
 synth.out = synth(dataprep.out)
-
 
 ```
 
@@ -100,22 +97,46 @@ path.plot(synth.res = synth.out, dataprep.res = dataprep.out,
           Ylab = " Sales ", Xlab = " Year ", Ylim = c(60,150))
 abline(v = 1989, col = "red")
 
-gaps.plot(synth.out, dataprep.out)
-abline(v = 1989, col="red")
 
+gaps.plot(synth.out, dataprep.out, labs(xlabs = "Cigarette Purchases Overtime"))
+abline(v = 1989, col="red")
 
 ```
 
 #5.) Assess the statistical significance of the treatment effect.
 ```{r, echo = FALSE}
 
-scg_Y <- dataprep.out$Y0plot%*% synth.out$solution.w
-gaps <- dataprep.out$Y1plot -scg_Y
+placebos <- generate_placebos(dataprep.out,synth.out)
 
-synth.tables <- synth.tab(dataprep.res = dataprep.out, synth.res = synth.out)
-synth.tables
+plot_placebos(placebos, discrad.extreme = TRUE, mspe.limit = 1)
 
-placebos <- generate.placebos(dataprep.out, synth.out)
-plot_placebos(placebos, discord.extreme = FALSE)
+```
+
+
+#5.) Assess the statistical significance of the treatment effect.
+``` {r, echo = FALSE}
+## MSPEs 
+treat_gap <- placebos$df[1:18, "Y1"] - placebos$df[1:18, "synthetic.Y1"]
+
+treat_mspe <- mean(treat_gap^2)
+
+
+
+placebos$df[1:9,3:2]
+
+
+
+#Analysis for Placebos
+
+placebo_gaps <- as.matrix(placebos$df[1:18,29:56] - placebos$df[1:18,1:28])
+placebo_mspe <- as.vector(colMeans(placebo_gaps^2))
+
+### Results 
+print(treat_mspe)
+
+
+print(sort(placebo_mspe))
+
+
 
 ```
